@@ -42,9 +42,21 @@ export default {
       this._initDots()
       this._initSlider()
     }, 20)
+
+    if (this.autoPlay) {
+      this._play()
+    }
+
+    window.addEventListener('resize', () => {
+      if (!this.slider) {
+        return
+      }
+      this._setSliderWidth(true)
+      this.slider.refresh()
+    })
   },
   methods: {
-    _setSliderWidth: function () {
+    _setSliderWidth: function (flag) {
       this.children = this.$refs.sliderGroup.children
       let width = 0
       let sliderWidth = this.$refs.slider.clientWidth
@@ -55,7 +67,7 @@ export default {
         chlid.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-      if (this.loop) {
+      if (this.loop && !flag) {
         width += sliderWidth * 2
       }
       this.$refs.sliderGroup.style.width = width + 'px'
@@ -80,7 +92,23 @@ export default {
           pageIndex -= 1
         }
         this.currentPageIndex = pageIndex
+
+        if (this.autoPlay) {
+          clearTimeout(this.timer)
+          this._play()
+        }
       })
+    },
+    _play: function () {
+      let pageIndex = this.currentPageIndex + 1
+
+      if (this.loop) {
+        pageIndex += 1
+      }
+
+      this.timer = setTimeout(() => {
+        this.slider.goToPage(pageIndex, 0, 400)
+      }, this.interval)
     }
   }
 }
