@@ -56,7 +56,7 @@ export default {
     })
   },
   methods: {
-    _setSliderWidth: function (flag) {
+    _setSliderWidth (flag) {
       this.children = this.$refs.sliderGroup.children
       let width = 0
       let sliderWidth = this.$refs.slider.clientWidth
@@ -72,10 +72,10 @@ export default {
       }
       this.$refs.sliderGroup.style.width = width + 'px'
     },
-    _initDots: function () {
+    _initDots () {
       this.dots = new Array(this.children.length)
     },
-    _initSlider: function () {
+    _initSlider () {
       this.slider = new BScroll(this.$refs.slider, {
         scrollX: true,
         scrollY: false,
@@ -99,7 +99,7 @@ export default {
         }
       })
     },
-    _play: function () {
+    _play () {
       let pageIndex = this.currentPageIndex + 1
 
       if (this.loop) {
