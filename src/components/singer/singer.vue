@@ -1,12 +1,14 @@
 <template>
     <div class="singer">
-    </div>  
+      <list-view :data="this.singers"></list-view>  
+    </div>
 </template>
 
 <script type="text/ecmascript-6">
 import {getSingerList} from 'api/singer'
 import Singer from 'common/js/singer.js'
 import {ERR_OK} from 'api/config'
+import ListView from 'base/listview/listview'
 
 const HOT_NAME = '热门'
 const HOT_NAME_LEN = 10
@@ -24,7 +26,7 @@ export default {
     _getSingerList () {
       getSingerList().then(res => {
         if (res.code === ERR_OK) {
-          console.log(this._normalizeSinger(res.data.list))
+          this.singers = this._normalizeSinger(res.data.list)
         }
       })
     },
@@ -63,6 +65,9 @@ export default {
       })
       return hot.concat(ret)
     }
+  },
+  components: {
+    ListView
   }
 }
 </script>
