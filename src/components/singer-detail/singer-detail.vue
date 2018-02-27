@@ -1,11 +1,23 @@
 <template>
+  <transition name="slide">
     <div class="singer-detail">
        rank
-    </div>  
+    </div>
+  </transition>    
 </template>
 
 <script type="text/ecmascript-6">
-export default {}
+import {mapGetters} from 'vuex'
+export default {
+  created () {
+    console.log(this.singer)
+  },
+  computed: {
+    ...mapGetters([
+      'singer'
+    ])
+  }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -19,4 +31,9 @@ export default {}
     right: 0
     bottom: 0
     background: $color-background
+
+  .slide-enter-active, .slide-leave-active
+    transition: all 0.3s
+  .slide-enter, .slide-leave-to
+    transform: translate3d(100%, 0, 0)  
 </style>
