@@ -8,9 +8,41 @@
 
 <script type="text/ecmascript-6">
 import {mapGetters} from 'vuex'
+import {getSingerDetail} from 'api/singer'
+import {ERR_OK} from 'api/config'
+import {createSong} from 'common/js/song'
+
 export default {
+  data () {
+    return {
+      song: []
+    }
+  },
   created () {
-    console.log(this.singer)
+    this._getDetail()
+  },
+  methods: {
+    _getDetail () {
+      if (!this.singer.id) {
+        this.$router.push('/singer')
+        return
+      }
+      getSingerDetail(this.singer.id).then((res) => {
+        if (res.code === ERR_OK) {
+          this.song = this._normalizeSongs(res.data.list)
+        }
+      })
+    },
+    _normalizeSongs (list) {
+      let re = []
+      list.forEach(item => {
+        let {musicData} = item
+        if (musicData.songid && musicData.albummid) {
+          re.push(createSong(musicData))
+        }
+      })
+      return re
+    }
   },
   computed: {
     ...mapGetters([
