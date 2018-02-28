@@ -2,8 +2,7 @@
     <div class="singer">
       <list-view @select="selectSinger" :data="this.singers"></list-view>  
       <router-view></router-view>
-       </div>
-  
+    </div>
 </template>
 
 <script type="text/ecmascript-6">

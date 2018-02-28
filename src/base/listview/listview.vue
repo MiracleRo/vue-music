@@ -21,7 +21,7 @@
             class="item" 
             :data-index="index"
             :class="{'current':currentIndex===index}"
-            >
+            :key="item.id">
           {{ item }}
         </li>
       </ul>
