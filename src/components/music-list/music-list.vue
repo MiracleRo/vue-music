@@ -65,20 +65,23 @@
       back () {
         this.$router.back()
       },
-      random () {
-
-      },
       selectItem (song, index) {
         this.selectPlay({
           list: this.songs,
-          index: index
+          index
+        })
+      },
+      random () {
+        this.randomPlay({
+          list: this.songs
         })
       },
       scroll (pos) {
         this.scrollY = pos.y
       },
       ...mapActions([
-        'selectPlay'
+        'selectPlay',
+        'randomPlay'
       ])
     },
     computed: {
