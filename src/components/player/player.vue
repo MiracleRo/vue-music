@@ -18,8 +18,8 @@
         </div>
         <div class="middle">
           <div class="middle-l" ref="middleL">
-            <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+            <div class="cd-wrapper" ref="cdWrapper" >
+              <div class="cd" :class="cdCls">
                 <img class="image" :src="currentSong.image">
               </div>
             </div>
@@ -34,7 +34,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play"></i>
+              <i @click="togglePlaying" :class="playIcon"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -49,7 +49,7 @@
     <transition>
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img :src="currentSong.image" width="40" height="40">
+          <img :src="currentSong.image" width="40" height="40" :class="cdCls">
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
@@ -58,11 +58,11 @@
         <div class="control">
         </div>
         <div class="control">
-          <i class="icon-playlist"></i>
+          <i class="icon-playlist" :class="miniIcon" @click.stop="togglePlaying"></i>
         </div>
       </div> 
     </transition>
-    <audio :src="currentSong.url"></audio>
+    <audio :src="currentSong.url" ref="audio"></audio>
   </div>  
 </template>
 
@@ -75,10 +75,20 @@ const transform = prefixStyle('transform')
 
 export default {
   computed: {
+    cdCls () {
+      return this.playing ? 'play' : 'play pause'
+    },
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    miniIcon () {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+    },
     ...mapGetters([
       'playlist',
       'fullScreen',
-      'currentSong'
+      'currentSong',
+      'playing'
     ])
   },
   methods: {
@@ -87,6 +97,9 @@ export default {
     },
     open () {
       this.setFullScreen(true)
+    },
+    togglePlaying () {
+      this.setPlayingState(!this.playing)
     },
     enter (el, done) {
       const {x, y, scale} = this._getPosAndScale()
@@ -144,8 +157,22 @@ export default {
       }
     },
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE'
     })
+  },
+  watch: {
+    currentSong () {
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      })
+    },
+    playing (newPlaying) {
+      const audio = this.$refs.audio
+      this.$nextTick(() => {
+        newPlaying ? audio.play() : audio.pause()
+      })
+    }
   }
 }
 </script>
