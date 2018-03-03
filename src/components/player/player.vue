@@ -85,6 +85,7 @@ import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
+import LyricParse from 'lyric-parser'
 
 const transform = prefixStyle('transform')
 
@@ -93,7 +94,8 @@ export default {
     return {
       songReady: false,
       currentTime: 0,
-      radius: 32
+      radius: 32,
+      currentLyric: null
     }
   },
   computed: {
@@ -275,6 +277,12 @@ export default {
         scale
       }
     },
+    getLyric () {
+      this.currentSong._getLyric().then(data => {
+        this.currentLyric = new LyricParse(data)
+        console.log(this.currentLyric)
+      })
+    },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
@@ -290,6 +298,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
+        this.getLyric()
       })
     },
     playing (newPlaying) {
