@@ -23,7 +23,18 @@
                 <img class="image" :src="currentSong.image">
               </div>
             </div>
-          </div>  
+          </div>
+          <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p ref="lyricLine"
+                   class="text"
+                   :key="line.id"
+                   :class="{'current': currentLineNum ===index}"
+                   v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
+              </div>
+            </div>
+          </scroll>  
         </div>
         <div class="bottom">
            <div class="progress-wrapper">
@@ -86,6 +97,7 @@ import {prefixStyle} from 'common/js/dom'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 import LyricParse from 'lyric-parser'
+import Scroll from 'base/scroll/scroll'
 
 const transform = prefixStyle('transform')
 
@@ -95,7 +107,8 @@ export default {
       songReady: false,
       currentTime: 0,
       radius: 32,
-      currentLyric: null
+      currentLyric: null,
+      currentLineNum: 0
     }
   },
   computed: {
@@ -278,10 +291,25 @@ export default {
       }
     },
     getLyric () {
-      this.currentSong._getLyric().then(data => {
-        this.currentLyric = new LyricParse(data)
-        console.log(this.currentLyric)
+      this.currentSong._getLyric().then(lyric => {
+        if (this.currentSong.lyric !== lyric) {
+          return
+        }
+        this.currentLyric = new LyricParse(lyric, this.handleLyric)
+        if (this.playing) {
+          this.currentLyric.play()
+        }
       })
+    },
+    handleLyric ({lineNum, txt}) {
+      this.currentLineNum = lineNum
+      if (lineNum > 5) {
+        let el = this.$refs.lyricLine[lineNum - 5]
+        this.$refs.lyricList.scrollToElement(el, 1000)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
+      }
+      this.playingLyric = txt
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
@@ -310,7 +338,8 @@ export default {
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   }
 }
 </script>
