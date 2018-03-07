@@ -32,12 +32,14 @@
   import Loading from 'base/loading/loading'
   import {prefixStyle} from 'common/js/dom'
   import {mapActions} from 'vuex'
+  import {playlistMixin} from 'common/js/mixin'
   
   const RESERVED_HEIGHT = 40
   const transform = prefixStyle('transform')
   const backdrop = prefixStyle('backdrop-filter')
 
   export default {
+    mixins: [playlistMixin],
     props: {
       title: {
         type: String,
@@ -78,6 +80,11 @@
       },
       scroll (pos) {
         this.scrollY = pos.y
+      },
+      handlePlaylist () {
+        const bottom = this.playlist.length > 0 ? '60px' : '0'
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
       },
       ...mapActions([
         'selectPlay',
